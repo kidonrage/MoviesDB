@@ -1,5 +1,5 @@
 //
-//  MVVMMoviesListViewController.swift
+//  MoviesListViewController.swift
 //  MVVMMovies
 //
 //  Created by Vlad Eliseev on 05.03.2021.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class MVVMMoviesListViewController: UITableViewController {
+final class MoviesListViewController: UITableViewController {
     // MARK: - Visual Components
 
     private let moviesTypeSegmentedControl: UISegmentedControl = {
@@ -58,8 +58,21 @@ final class MVVMMoviesListViewController: UITableViewController {
 
     // MARK: - Private Properties
 
-    private let viewModel = MVVMMoviesListViewModel()
+    private let viewModel: MoviesListViewModelProtocol
     private let movieDetailsVC = MovieDetailsViewController()
+
+    // MARK: - Initializers
+
+    init(viewModel: MoviesListViewModelProtocol) {
+        self.viewModel = viewModel
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - UITableViewController
 
@@ -68,20 +81,20 @@ final class MVVMMoviesListViewController: UITableViewController {
 
         title = "MVVMMovies"
 
-        viewModel.delegate = self
-
         tableView.register(MovieTableViewCell.self, forCellReuseIdentifier: MovieTableViewCell.cellId)
 
         refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(viewModel, action: #selector(viewModel.refreshMVVMMovies), for: .valueChanged)
+        refreshControl?.addTarget(self, action: #selector(handleMoviesRefresh), for: .valueChanged)
 
         moviesTypeSegmentedControl.addTarget(self, action: #selector(handleMovieTypeChanged), for: .valueChanged)
 
         tableView.tableHeaderView = playingMVVMMoviesView
         tableView.prefetchDataSource = self
 
-        viewModel.selectMVVMMoviesType(at: moviesTypeSegmentedControl.selectedSegmentIndex)
-        viewModel.refreshMVVMMovies()
+        bindViewModel()
+
+        viewModel.selectMoviesType(at: moviesTypeSegmentedControl.selectedSegmentIndex)
+        viewModel.refreshMovies()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -149,8 +162,45 @@ final class MVVMMoviesListViewController: UITableViewController {
     // MARK: - Private Methods
 
     @objc private func handleMovieTypeChanged() {
-        viewModel.selectMVVMMoviesType(at: moviesTypeSegmentedControl.selectedSegmentIndex)
-        viewModel.fetchMVVMMovies()
+        viewModel.selectMoviesType(at: moviesTypeSegmentedControl.selectedSegmentIndex)
+        viewModel.fetchMovies()
+    }
+
+    @objc private func handleMoviesRefresh() {
+        viewModel.refreshMovies()
+    }
+
+    private func didFetchMovies(with newIndexPathsToReload: [IndexPath]?) {
+        guard let newIndexPathsToReload = newIndexPathsToReload else {
+            refreshControl?.endRefreshing()
+            tableView.reloadData()
+            return
+        }
+
+        let indexPathsToReload = visibleIndexPathsToReload(intersecting: newIndexPathsToReload)
+        tableView.reloadRows(at: indexPathsToReload, with: .automatic)
+    }
+
+    private func didFetchPlayingMovies() {
+        playingMVVMMoviesCollectionView.reloadData()
+    }
+
+    private func didFailedFetchingMovies() {
+        let ac = UIAlertController(
+            title: "Упс!",
+            message: "Что-то поошло не так при загрузке фильмов",
+            preferredStyle: .alert
+        )
+
+        ac.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+
+        present(ac, animated: true, completion: nil)
+    }
+
+    private func bindViewModel() {
+        viewModel.didFailedFetchingMoviesHandler = didFailedFetchingMovies
+        viewModel.didFetchMoviesHandler = didFetchMovies(with:)
+        viewModel.didFetchPlayingMoviesHandler = didFetchPlayingMovies
     }
 
     private func isLoadingCell(for indexPath: IndexPath) -> Bool {
@@ -164,40 +214,9 @@ final class MVVMMoviesListViewController: UITableViewController {
     }
 }
 
-// MARK: - MVVMMoviesListViewModelDelegate
-
-extension MVVMMoviesListViewController: MVVMMoviesListViewModelDelegate {
-    func didFetchMVVMMovies(with newIndexPathsToReload: [IndexPath]?) {
-        guard let newIndexPathsToReload = newIndexPathsToReload else {
-            refreshControl?.endRefreshing()
-            tableView.reloadData()
-            return
-        }
-
-        let indexPathsToReload = visibleIndexPathsToReload(intersecting: newIndexPathsToReload)
-        tableView.reloadRows(at: indexPathsToReload, with: .automatic)
-    }
-
-    func didFetchPlayingMVVMMovies() {
-        playingMVVMMoviesCollectionView.reloadData()
-    }
-
-    func didFailedFetchingMVVMMovies() {
-        let ac = UIAlertController(
-            title: "Упс!",
-            message: "Что-то поошло не так при загрузке фильмов",
-            preferredStyle: .alert
-        )
-
-        ac.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-
-        present(ac, animated: true, completion: nil)
-    }
-}
-
 // MARK: - UICollectionViewDataSource
 
-extension MVVMMoviesListViewController: UICollectionViewDataSource {
+extension MoviesListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         viewModel.playingMVVMMoviesCount
     }
@@ -227,7 +246,7 @@ extension MVVMMoviesListViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegateFlowLayout
 
-extension MVVMMoviesListViewController: UICollectionViewDelegateFlowLayout {
+extension MoviesListViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -239,14 +258,14 @@ extension MVVMMoviesListViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - UICollectionViewDelegate
 
-extension MVVMMoviesListViewController: UICollectionViewDelegate {}
+extension MoviesListViewController: UICollectionViewDelegate {}
 
 // MARK: - UITableViewDataSourcePrefetching
 
-extension MVVMMoviesListViewController: UITableViewDataSourcePrefetching {
+extension MoviesListViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         if indexPaths.contains(where: isLoadingCell) {
-            viewModel.fetchMVVMMovies()
+            viewModel.fetchMovies()
         }
     }
 }

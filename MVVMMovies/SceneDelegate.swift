@@ -8,22 +8,19 @@
 import UIKit
 
 // swiftlint:disable custom_doc
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
+    var coordinator: ApplicationCoordinator?
 
     func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         let window = UIWindow(windowScene: windowScene)
-
         self.window = window
-
-        window
-            .rootViewController =
-            MVVMMoviesNavigationController(
-                rootViewController: MoviesListViewController(viewModel: MoviesListViewModel())
-            )
         window.makeKeyAndVisible()
+
+        coordinator = ApplicationCoordinator()
+        coordinator?.start()
     }
 
     func sceneDidDisconnect(_: UIScene) {

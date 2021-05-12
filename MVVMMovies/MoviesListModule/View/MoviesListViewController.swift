@@ -59,7 +59,7 @@ final class MoviesListViewController: UITableViewController {
     // MARK: - Private Properties
 
     private let viewModel: MoviesListViewModelProtocol
-    private let movieDetailsVC = MovieDetailsViewController()
+//    private let movieDetailsVC = MovieDetailsViewController(viewModel: <#T##MovieDetailsViewModelProtocol#>)
 
     // MARK: - Initializers
 
@@ -141,9 +141,11 @@ final class MoviesListViewController: UITableViewController {
     // MARK: - UITableViewDelegate
 
     override func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-        movieDetailsVC.movie = viewModel.movie(at: indexPath.row)
+//        movieDetailsVC.movie = viewModel.movie(at: indexPath.row)
 
-        navigationController?.pushViewController(movieDetailsVC, animated: true)
+//        navigationController?.pushViewController(movieDetailsVC, animated: true)
+
+        fatalError("Coordinator not implemented yet")
     }
 
     override func tableView(_: UITableView, heightForHeaderInSection _: Int) -> CGFloat {
@@ -238,9 +240,11 @@ extension MoviesListViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        movieDetailsVC.movie = viewModel.playingMovie(at: indexPath.item)
+//        movieDetailsVC.movie = viewModel.playingMovie(at: indexPath.item)
 
-        navigationController?.pushViewController(movieDetailsVC, animated: true)
+//        navigationController?.pushViewController(movieDetailsVC, animated: true)
+
+        fatalError("Coordinator not implemented yet")
     }
 }
 

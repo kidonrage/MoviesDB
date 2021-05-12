@@ -56,10 +56,19 @@ final class MovieDetailsViewController: UIViewController {
 
     // MARK: - Public Properties
 
-    var movie: Movie? {
-        didSet {
-            updateUI()
-        }
+    private let viewModel: MovieDetailsViewModelProtocol
+
+    // MARK: - Initializers
+
+    init(viewModel: MovieDetailsViewModelProtocol) {
+        self.viewModel = viewModel
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     // MARK: - UIViewController
@@ -68,19 +77,20 @@ final class MovieDetailsViewController: UIViewController {
         super.viewDidLoad()
 
         setupUI()
+        updateUI()
     }
 
     // MARK: - Private Methods
 
     private func updateUI() {
-        title = movie?.title
+        title = viewModel.movie.title
 
         posterView.image = nil
-        titleLabel.text = movie?.title
-        dateLabel.text = movie?.releaseDate
-        descriptionLabel.text = movie?.overview
+        titleLabel.text = viewModel.movie.title
+        dateLabel.text = viewModel.movie.releaseDate
+        descriptionLabel.text = viewModel.movie.overview
 
-        if let posterURL = MVVMMoviesManager.getMoviePosterURL(withPath: movie?.posterPath ?? "") {
+        if let posterURL = MVVMMoviesManager.getMoviePosterURL(withPath: viewModel.movie.posterPath ?? "") {
             posterView.loadImageFromUrl(url: posterURL)
         }
     }

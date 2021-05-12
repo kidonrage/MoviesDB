@@ -18,7 +18,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         self.window = window
 
-        window.rootViewController = MVVMMoviesNavigationController(rootViewController: MVVMMoviesListViewController())
+        window
+            .rootViewController =
+            MVVMMoviesNavigationController(
+                rootViewController: MoviesListViewController(viewModel: MoviesListViewModel())
+            )
         window.makeKeyAndVisible()
     }
 

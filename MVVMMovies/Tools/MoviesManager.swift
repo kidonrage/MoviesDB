@@ -38,7 +38,9 @@ final class MVVMMoviesManager {
                 "page": "\(page)"
             ]
         ) { data in
-            callback(self.parsedResponseFromFetchedData(data))
+            DispatchQueue.main.async {
+                callback(self.parsedResponseFromFetchedData(data))
+            }
         }
     }
 

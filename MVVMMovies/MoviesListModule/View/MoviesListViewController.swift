@@ -140,15 +140,11 @@ final class MoviesListViewController: UITableViewController {
     }
 
     private func didFailedFetchingMovies() {
-        let ac = UIAlertController(
+        displayAlert(
             title: "Упс!",
             message: "Что-то поошло не так при загрузке фильмов",
-            preferredStyle: .alert
+            actions: [UIAlertAction(title: "OK", style: .default, handler: nil)]
         )
-
-        ac.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-
-        present(ac, animated: true, completion: nil)
     }
 
     private func bindViewModel() {
@@ -276,3 +272,7 @@ extension MoviesListViewController: UITableViewDataSourcePrefetching {
         }
     }
 }
+
+// MARK: - AlertDisplayer
+
+extension MoviesListViewController: AlertDisplayer {}

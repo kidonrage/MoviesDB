@@ -188,7 +188,7 @@ extension MoviesListViewController {
         if isLoadingCell(for: indexPath) {
             cell.configure(with: nil)
         } else {
-            cell.configure(with: viewModel.movie(at: indexPath.row))
+            cell.configure(with: viewModel.movieCellViewModel(forMovieAtIndexPath: indexPath))
         }
         return cell
     }
@@ -237,7 +237,8 @@ extension MoviesListViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
 
-        cell.configure(withMovie: viewModel.playingMovie(at: indexPath.item))
+        let playingMovieViewModel = viewModel.playingMovieViewViewModel(forMovieAtIndexPath: indexPath)
+        cell.configure(withViewModel: playingMovieViewModel)
 
         return cell
     }

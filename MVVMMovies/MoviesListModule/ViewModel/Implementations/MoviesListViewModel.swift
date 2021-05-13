@@ -56,7 +56,9 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
 
                 switch result {
                 case .failure:
-                    self?.didFailedFetchingMoviesHandler?()
+                    DispatchQueue.main.async {
+                        self?.didFailedFetchingMoviesHandler?()
+                    }
                 case let .success(response):
                     self?.currentPage += 1
 
@@ -65,9 +67,13 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
 
                     if response.page > 1 {
                         let indexPathsToReload = self?.calculateIndexPathsToReload(from: response.results)
-                        self?.didFetchMoviesHandler?(indexPathsToReload)
+                        DispatchQueue.main.async {
+                            self?.didFetchMoviesHandler?(indexPathsToReload)
+                        }
                     } else {
-                        self?.didFetchMoviesHandler?(nil)
+                        DispatchQueue.main.async {
+                            self?.didFetchMoviesHandler?(nil)
+                        }
                     }
                 }
             }
@@ -77,10 +83,14 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
         moviesManager.fetchMovies(ofType: .playing, page: 1) { [weak self] result in
             switch result {
             case .failure:
-                self?.didFailedFetchingMoviesHandler?()
+                DispatchQueue.main.async {
+                    self?.didFailedFetchingMoviesHandler?()
+                }
             case let .success(response):
                 self?.playingMovies.append(contentsOf: response.results)
-                self?.didFetchPlayingMoviesHandler?()
+                DispatchQueue.main.async {
+                    self?.didFetchPlayingMoviesHandler?()
+                }
             }
         }
     }
@@ -120,5 +130,18 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
         let startIndex = movies.count - newMVVMMovies.count
         let endIndex = startIndex + newMVVMMovies.count
         return (startIndex ..< endIndex).map { IndexPath(row: $0, section: 0) }
+    }
+
+    func playingMovieViewViewModel(forMovieAtIndexPath indexPath: IndexPath) -> PlayingMovieViewModelProtocol {
+        let movie = playingMovie(at: indexPath.row)
+        let viewModel = PlayingMovieViewModel(movie: movie, movieImagesService: MovieImagesService())
+
+        return viewModel
+    }
+
+    func movieCellViewModel(forMovieAtIndexPath indexPath: IndexPath) -> MovieCellViewModelProtocol {
+        let viewModel = MovieCellViewModel(movie: movie(at: indexPath.row), movieImagesService: MovieImagesService())
+
+        return viewModel
     }
 }

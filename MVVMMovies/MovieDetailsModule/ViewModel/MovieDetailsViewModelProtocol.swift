@@ -9,4 +9,5 @@ import Foundation
 
 protocol MovieDetailsViewModelProtocol {
     var movie: Movie { get }
+    var moviePosterURL: URL? { get }
 }

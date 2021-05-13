@@ -39,8 +39,4 @@ final class MoviesManager: MoviesManagerProtocol {
             completionHandler(result)
         }
     }
-
-    static func getMoviePosterURL(withPath posterPath: String) -> URL? {
-        URL(string: "http://image.tmdb.org/t/p/w342\(posterPath)")
-    }
 }

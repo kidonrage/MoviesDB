@@ -27,7 +27,11 @@ final class ApplicationCoordinator: BaseCoordinator {
     }
 
     private func showMovieDetails(for movie: Movie) {
-        let controller = MovieDetailsViewController(viewModel: MovieDetailViewModel(movie: movie))
+        let viewModel = MovieDetailViewModel(
+            movie: movie,
+            movieImagesService: MovieImagesService()
+        )
+        let controller = MovieDetailsViewController(viewModel: viewModel)
         rootController?.pushViewController(controller, animated: true)
     }
 }

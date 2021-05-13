@@ -40,8 +40,14 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
     // MARK: - Public Methods
 
     func fetchMovies() {
+        guard currentMVVMMoviesDownloadTask == nil else {
+            return
+        }
+
         currentMVVMMoviesDownloadTask = moviesManager
             .getMovieFetchTask(ofType: currentMovieType, page: currentPage + 1) { [weak self] response in
+                self?.currentMVVMMoviesDownloadTask = nil
+
                 guard let successResponse = response else {
                     self?.didFailedFetchingMoviesHandler?()
                     return

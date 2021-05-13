@@ -54,7 +54,7 @@ final class MovieDetailsViewController: UIViewController {
         return scrollView
     }()
 
-    // MARK: - Public Properties
+    // MARK: - Private Properties
 
     private let viewModel: MovieDetailsViewModelProtocol
 

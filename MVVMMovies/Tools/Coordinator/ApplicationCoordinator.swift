@@ -15,7 +15,7 @@ final class ApplicationCoordinator: BaseCoordinator {
     }
 
     private func showMoviesList() {
-        let controller = MoviesListViewController(viewModel: MoviesListViewModel())
+        let controller = MoviesListViewController(viewModel: MoviesListViewModel(moviesManager: MoviesManager()))
 
         controller.handleGoingToMovieDetails = { [weak self] movie in
             self?.showMovieDetails(for: movie)

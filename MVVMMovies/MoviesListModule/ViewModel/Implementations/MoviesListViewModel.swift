@@ -33,20 +33,26 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
     private var total = 0
     private var currentPage = 0
     private var isFetchingInProgress = false
-    private let moviesManager = MVVMMoviesManager()
-    private var currentMovieType = MVVMMoviesListType.popular
-    private var currentMVVMMoviesDownloadTask: URLSessionTask?
+    private let moviesManager: MoviesManagerProtocol
+    private var currentMovieType = MoviesListType.popular
+    private var currentMoviesDownloadTask: URLSessionTask?
+
+    // MARK: - Initializers
+
+    init(moviesManager: MoviesManagerProtocol) {
+        self.moviesManager = moviesManager
+    }
 
     // MARK: - Public Methods
 
     func fetchMovies() {
-        guard currentMVVMMoviesDownloadTask == nil else {
+        guard currentMoviesDownloadTask == nil else {
             return
         }
 
-        currentMVVMMoviesDownloadTask = moviesManager
+        currentMoviesDownloadTask = moviesManager
             .fetchMovies(ofType: currentMovieType, page: currentPage + 1) { [weak self] result in
-                self?.currentMVVMMoviesDownloadTask = nil
+                self?.currentMoviesDownloadTask = nil
 
                 switch result {
                 case .failure:
@@ -88,7 +94,7 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
     }
 
     func selectMoviesType(at index: Int) {
-        guard let selectedMVVMMoviesType = MVVMMoviesListType(rawValue: index) else {
+        guard let selectedMVVMMoviesType = MoviesListType(rawValue: index) else {
             return
         }
 
@@ -97,7 +103,7 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
         currentPage = 0
         movies = []
 
-        currentMVVMMoviesDownloadTask?.cancel()
+        currentMoviesDownloadTask?.cancel()
 
         fetchMovies()
     }

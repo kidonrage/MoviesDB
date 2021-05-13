@@ -1,13 +1,13 @@
 //
-//  MVVMMoviesManager.swift
+//  MoviesManager.swift
 //  MVVMMovies
 //
 //  Created by Vlad Eliseev on 05.03.2021.
 //
 
-import UIKit
+import Foundation
 
-final class MVVMMoviesManager {
+final class MoviesManager: MoviesManagerProtocol {
     // MARK: - Private Properties
 
     private let networkManager = NetworkManager()
@@ -16,9 +16,9 @@ final class MVVMMoviesManager {
 
     @discardableResult
     func fetchMovies(
-        ofType type: MVVMMoviesListType,
+        ofType type: MoviesListType,
         page: Int,
-        _ completionHandler: @escaping (Result<MVVMMoviesQueryResponse, DataResponseError>) -> Void
+        _ completionHandler: @escaping (Result<MoviesQueryResponse, DataResponseError>) -> Void
     ) -> URLSessionDataTask? {
         let enpoint: MVVMMoviesEndpoint
         switch type {
@@ -35,23 +35,12 @@ final class MVVMMoviesManager {
         return networkManager.executeDecodableDataTask(withEndpointPath: enpoint.rawValue, parameters: [
             "language": "ru",
             "page": "\(page)"
-        ]) { (result: Result<MVVMMoviesQueryResponse, DataResponseError>) in
+        ]) { result in
             completionHandler(result)
         }
     }
 
     static func getMoviePosterURL(withPath posterPath: String) -> URL? {
         URL(string: "http://image.tmdb.org/t/p/w342\(posterPath)")
-    }
-}
-
-// MARK: - MVVMMoviesEndpoint
-
-extension MVVMMoviesManager {
-    enum MVVMMoviesEndpoint: String {
-        case topRated = "top_rated"
-        case popular
-        case playing = "now_playing"
-        case upcoming
     }
 }

@@ -89,7 +89,7 @@ final class MovieTableViewCell: UITableViewCell {
             descriptionLabel.text = movie.overview
             indicatorView.stopAnimating()
 
-            if let posterURL = MVVMMoviesManager.getMoviePosterURL(withPath: movie.posterPath ?? "") {
+            if let posterURL = MoviesManager.getMoviePosterURL(withPath: movie.posterPath ?? "") {
                 posterView.loadImageFromUrl(url: posterURL)
             }
         } else {

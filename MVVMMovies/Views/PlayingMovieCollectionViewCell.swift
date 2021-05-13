@@ -48,7 +48,7 @@ final class PlayingMovieCollectionViewCell: UICollectionViewCell {
     func configure(withMovie movie: Movie?) {
         titleLabel.text = movie?.title
 
-        if let posterURL = MVVMMoviesManager.getMoviePosterURL(withPath: movie?.posterPath ?? "") {
+        if let posterURL = MoviesManager.getMoviePosterURL(withPath: movie?.posterPath ?? "") {
             posterView.loadImageFromUrl(url: posterURL)
         }
     }

@@ -8,7 +8,7 @@
 import Foundation
 
 /// Тип получаемого списка фильмов
-enum MVVMMoviesListType: Int {
+enum MoviesListType: Int {
     case popular
     case topRated
     case upcoming

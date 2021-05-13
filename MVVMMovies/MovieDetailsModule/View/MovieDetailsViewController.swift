@@ -90,7 +90,7 @@ final class MovieDetailsViewController: UIViewController {
         dateLabel.text = viewModel.movie.releaseDate
         descriptionLabel.text = viewModel.movie.overview
 
-        if let posterURL = MVVMMoviesManager.getMoviePosterURL(withPath: viewModel.movie.posterPath ?? "") {
+        if let posterURL = MoviesManager.getMoviePosterURL(withPath: viewModel.movie.posterPath ?? "") {
             posterView.loadImageFromUrl(url: posterURL)
         }
     }

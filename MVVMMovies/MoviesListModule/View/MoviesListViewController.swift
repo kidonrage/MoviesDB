@@ -93,6 +93,7 @@ final class MoviesListViewController: UITableViewController {
 
         tableView.tableHeaderView = playingMVVMMoviesView
         tableView.prefetchDataSource = self
+        tableView.showsVerticalScrollIndicator = false
 
         bindViewModel()
 

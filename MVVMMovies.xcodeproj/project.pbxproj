@@ -146,10 +146,10 @@
 		E147FBA225F2624C009659E9 /* Tools */ = {
 			isa = PBXGroup;
 			children = (
-				E1D6AAD5264D514F00025B5A /* Networking */,
-				E17BB9CB264C2B0B008E170C /* Coordinator */,
 				E147FBA325F2625E009659E9 /* MoviesManager.swift */,
 				E176446825F8A14A00A8BBDA /* NetworkManager.swift */,
+				E17BB9CB264C2B0B008E170C /* Coordinator */,
+				E1D6AAD5264D514F00025B5A /* Networking */,
 			);
 			path = Tools;
 			sourceTree = "<group>";

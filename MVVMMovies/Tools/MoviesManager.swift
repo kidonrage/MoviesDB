@@ -14,11 +14,12 @@ final class MVVMMoviesManager {
 
     // MARK: - Public Methods
 
-    func getMovieFetchTask(
+    @discardableResult
+    func fetchMovies(
         ofType type: MVVMMoviesListType,
         page: Int,
-        _ callback: @escaping (MVVMMoviesQueryResponse?) -> Void
-    ) -> URLSessionTask? {
+        _ completionHandler: @escaping (Result<MVVMMoviesQueryResponse, DataResponseError>) -> Void
+    ) -> URLSessionDataTask? {
         let enpoint: MVVMMoviesEndpoint
         switch type {
         case .playing:
@@ -31,43 +32,16 @@ final class MVVMMoviesManager {
             enpoint = .upcoming
         }
 
-        return networkManager.getEndpointFetchingTask(
-            enpoint.rawValue,
-            parameters: [
-                "language": "ru",
-                "page": "\(page)"
-            ]
-        ) { data in
-            DispatchQueue.main.async {
-                callback(self.parsedResponseFromFetchedData(data))
-            }
+        return networkManager.executeDecodableDataTask(withEndpointPath: enpoint.rawValue, parameters: [
+            "language": "ru",
+            "page": "\(page)"
+        ]) { (result: Result<MVVMMoviesQueryResponse, DataResponseError>) in
+            completionHandler(result)
         }
     }
 
     static func getMoviePosterURL(withPath posterPath: String) -> URL? {
         URL(string: "http://image.tmdb.org/t/p/w342\(posterPath)")
-    }
-
-    // MARK: - Private Methods
-
-    private func parsedResponseFromFetchedData(_ data: Data?) -> MVVMMoviesQueryResponse? {
-        guard let responseData = data else {
-            return nil
-        }
-
-        var response: MVVMMoviesQueryResponse?
-
-        do {
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-
-            response = try decoder.decode(MVVMMoviesQueryResponse.self, from: responseData)
-        } catch {
-            print(error)
-            return nil
-        }
-
-        return response
     }
 }
 

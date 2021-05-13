@@ -7,10 +7,11 @@
 
 import Foundation
 
+/// Ошибка выполнения запроса данных
 enum DataResponseError: Error {
-
     case network
     case decoding
+    case request
 
     var reason: String {
         switch self {
@@ -18,8 +19,8 @@ enum DataResponseError: Error {
             return "Произошла ошибка при декодировании данных"
         case .network:
             return "Произошла ошибка при получении данных"
+        case .request:
+            return "Произошла ошибка при формировании сетевого запроса"
         }
     }
-    
-
 }

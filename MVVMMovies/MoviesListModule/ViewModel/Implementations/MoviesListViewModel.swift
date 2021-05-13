@@ -45,42 +45,38 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
         }
 
         currentMVVMMoviesDownloadTask = moviesManager
-            .getMovieFetchTask(ofType: currentMovieType, page: currentPage + 1) { [weak self] response in
+            .fetchMovies(ofType: currentMovieType, page: currentPage + 1) { [weak self] result in
                 self?.currentMVVMMoviesDownloadTask = nil
 
-                guard let successResponse = response else {
+                switch result {
+                case .failure:
                     self?.didFailedFetchingMoviesHandler?()
-                    return
-                }
+                case let .success(response):
+                    self?.currentPage += 1
 
-                self?.currentPage += 1
+                    self?.total = response.totalResults
+                    self?.movies.append(contentsOf: response.results)
 
-                self?.total = successResponse.totalResults
-                self?.movies.append(contentsOf: successResponse.results)
-
-                if successResponse.page > 1 {
-                    let indexPathsToReload = self?.calculateIndexPathsToReload(from: successResponse.results)
-                    self?.didFetchMoviesHandler?(indexPathsToReload)
-                } else {
-                    self?.didFetchMoviesHandler?(nil)
+                    if response.page > 1 {
+                        let indexPathsToReload = self?.calculateIndexPathsToReload(from: response.results)
+                        self?.didFetchMoviesHandler?(indexPathsToReload)
+                    } else {
+                        self?.didFetchMoviesHandler?(nil)
+                    }
                 }
             }
-
-        currentMVVMMoviesDownloadTask?.resume()
     }
 
     func fetchPlayingMovies() {
-        let task = moviesManager.getMovieFetchTask(ofType: .playing, page: 1) { [weak self] response in
-            guard let successResponse = response else {
+        moviesManager.fetchMovies(ofType: .playing, page: 1) { [weak self] result in
+            switch result {
+            case .failure:
                 self?.didFailedFetchingMoviesHandler?()
-                return
+            case let .success(response):
+                self?.playingMovies.append(contentsOf: response.results)
+                self?.didFetchPlayingMoviesHandler?()
             }
-
-            self?.playingMovies.append(contentsOf: successResponse.results)
-            self?.didFetchPlayingMoviesHandler?()
         }
-
-        task?.resume()
     }
 
     func refreshMovies() {

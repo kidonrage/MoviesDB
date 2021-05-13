@@ -97,7 +97,7 @@ final class MoviesListViewController: UITableViewController {
         bindViewModel()
 
         viewModel.selectMoviesType(at: moviesTypeSegmentedControl.selectedSegmentIndex)
-        viewModel.refreshMovies()
+        viewModel.fetchPlayingMovies()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -111,53 +111,6 @@ final class MoviesListViewController: UITableViewController {
             width: playingMVVMMoviesView.frame.width,
             height: 134
         )
-    }
-
-    // MARK: - UITableViewDataSource
-
-    override func numberOfSections(in _: UITableView) -> Int {
-        1
-    }
-
-    override func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        viewModel.totalCount
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: MovieTableViewCell.cellId,
-            for: indexPath
-        )
-            as? MovieTableViewCell
-        else {
-            return UITableViewCell()
-        }
-
-        if isLoadingCell(for: indexPath) {
-            cell.configure(with: nil)
-        } else {
-            cell.configure(with: viewModel.movie(at: indexPath.row))
-        }
-        return cell
-    }
-
-    // MARK: - UITableViewDelegate
-
-    override func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-        handleGoingToMovieDetails?(viewModel.movie(at: indexPath.row))
-    }
-
-    override func tableView(_: UITableView, heightForHeaderInSection _: Int) -> CGFloat {
-        40
-    }
-
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection _: Int) -> UIView? {
-        moviesTypeSegmentedControl.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40)
-        return moviesTypeSegmentedControl
-    }
-
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        240
     }
 
     // MARK: - Private Methods
@@ -212,6 +165,57 @@ final class MoviesListViewController: UITableViewController {
         let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows ?? []
         let indexPathsIntersection = Set(indexPathsForVisibleRows).intersection(indexPaths)
         return Array(indexPathsIntersection)
+    }
+}
+
+// MARK: - UITableViewDataSource
+
+extension MoviesListViewController {
+    override func numberOfSections(in _: UITableView) -> Int {
+        1
+    }
+
+    override func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
+        viewModel.totalCount
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: MovieTableViewCell.cellId,
+            for: indexPath
+        )
+            as? MovieTableViewCell
+        else {
+            return UITableViewCell()
+        }
+
+        if isLoadingCell(for: indexPath) {
+            cell.configure(with: nil)
+        } else {
+            cell.configure(with: viewModel.movie(at: indexPath.row))
+        }
+        return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+
+extension MoviesListViewController {
+    override func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+        handleGoingToMovieDetails?(viewModel.movie(at: indexPath.row))
+    }
+
+    override func tableView(_: UITableView, heightForHeaderInSection _: Int) -> CGFloat {
+        40
+    }
+
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection _: Int) -> UIView? {
+        moviesTypeSegmentedControl.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40)
+        return moviesTypeSegmentedControl
+    }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        240
     }
 }
 

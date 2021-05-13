@@ -202,7 +202,11 @@ extension MoviesListViewController {
 
 extension MoviesListViewController {
     override func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-        handleGoingToMovieDetails?(viewModel.movie(at: indexPath.row))
+        if isLoadingCell(for: indexPath) {
+            return
+        } else {
+            handleGoingToMovieDetails?(viewModel.movie(at: indexPath.row))
+        }
     }
 
     override func tableView(_: UITableView, heightForHeaderInSection _: Int) -> CGFloat {

@@ -93,6 +93,7 @@ final class MoviesListViewController: UITableViewController {
 
         tableView.tableHeaderView = playingMVVMMoviesView
         tableView.prefetchDataSource = self
+        tableView.showsVerticalScrollIndicator = false
 
         bindViewModel()
 
@@ -140,15 +141,11 @@ final class MoviesListViewController: UITableViewController {
     }
 
     private func didFailedFetchingMovies() {
-        let ac = UIAlertController(
+        displayAlert(
             title: "Упс!",
             message: "Что-то поошло не так при загрузке фильмов",
-            preferredStyle: .alert
+            actions: [UIAlertAction(title: "OK", style: .default, handler: nil)]
         )
-
-        ac.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-
-        present(ac, animated: true, completion: nil)
     }
 
     private func bindViewModel() {
@@ -192,7 +189,7 @@ extension MoviesListViewController {
         if isLoadingCell(for: indexPath) {
             cell.configure(with: nil)
         } else {
-            cell.configure(with: viewModel.movie(at: indexPath.row))
+            cell.configure(with: viewModel.movieCellViewModel(forMovieAtIndexPath: indexPath))
         }
         return cell
     }
@@ -241,7 +238,8 @@ extension MoviesListViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
 
-        cell.configure(withMovie: viewModel.playingMovie(at: indexPath.item))
+        let playingMovieViewModel = viewModel.playingMovieViewViewModel(forMovieAtIndexPath: indexPath)
+        cell.configure(withViewModel: playingMovieViewModel)
 
         return cell
     }
@@ -276,3 +274,7 @@ extension MoviesListViewController: UITableViewDataSourcePrefetching {
         }
     }
 }
+
+// MARK: - AlertDisplayer
+
+extension MoviesListViewController: AlertDisplayer {}

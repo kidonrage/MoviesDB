@@ -30,6 +30,20 @@ final class PlayingMovieCollectionViewCell: UICollectionViewCell {
         return label
     }()
 
+    // MARK: - Private Properties
+
+    private var viewModel: PlayingMovieViewModelProtocol? {
+        didSet {
+            guard let viewModel = viewModel else { return }
+
+            titleLabel.text = viewModel.movie.title
+
+            if let posterURL = viewModel.moviePosterURL {
+                posterView.loadImageFromUrl(url: posterURL)
+            }
+        }
+    }
+
     // MARK: - Initializers
 
     override init(frame: CGRect) {
@@ -45,12 +59,8 @@ final class PlayingMovieCollectionViewCell: UICollectionViewCell {
 
     // MARK: - Public Methods
 
-    func configure(withMovie movie: Movie?) {
-        titleLabel.text = movie?.title
-
-        if let posterURL = MVVMMoviesManager.getMoviePosterURL(withPath: movie?.posterPath ?? "") {
-            posterView.loadImageFromUrl(url: posterURL)
-        }
+    func configure(withViewModel viewModel: PlayingMovieViewModelProtocol) {
+        self.viewModel = viewModel
     }
 
     // MARK: - Private Methods

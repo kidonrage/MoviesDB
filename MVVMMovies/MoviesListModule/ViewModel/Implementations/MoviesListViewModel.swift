@@ -33,54 +33,66 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
     private var total = 0
     private var currentPage = 0
     private var isFetchingInProgress = false
-    private let moviesManager = MVVMMoviesManager()
-    private var currentMovieType = MVVMMoviesListType.popular
-    private var currentMVVMMoviesDownloadTask: URLSessionTask?
+    private let moviesManager: MoviesManagerProtocol
+    private var currentMovieType = MoviesListType.popular
+    private var currentMoviesDownloadTask: URLSessionTask?
+
+    // MARK: - Initializers
+
+    init(moviesManager: MoviesManagerProtocol) {
+        self.moviesManager = moviesManager
+    }
 
     // MARK: - Public Methods
 
     func fetchMovies() {
-        guard currentMVVMMoviesDownloadTask == nil else {
+        guard currentMoviesDownloadTask == nil else {
             return
         }
 
-        currentMVVMMoviesDownloadTask = moviesManager
-            .getMovieFetchTask(ofType: currentMovieType, page: currentPage + 1) { [weak self] response in
-                self?.currentMVVMMoviesDownloadTask = nil
+        currentMoviesDownloadTask = moviesManager
+            .fetchMovies(ofType: currentMovieType, page: currentPage + 1) { [weak self] result in
+                self?.currentMoviesDownloadTask = nil
 
-                guard let successResponse = response else {
-                    self?.didFailedFetchingMoviesHandler?()
-                    return
-                }
+                switch result {
+                case .failure:
+                    DispatchQueue.main.async {
+                        self?.didFailedFetchingMoviesHandler?()
+                    }
+                case let .success(response):
+                    self?.currentPage += 1
 
-                self?.currentPage += 1
+                    self?.total = response.totalResults
+                    self?.movies.append(contentsOf: response.results)
 
-                self?.total = successResponse.totalResults
-                self?.movies.append(contentsOf: successResponse.results)
-
-                if successResponse.page > 1 {
-                    let indexPathsToReload = self?.calculateIndexPathsToReload(from: successResponse.results)
-                    self?.didFetchMoviesHandler?(indexPathsToReload)
-                } else {
-                    self?.didFetchMoviesHandler?(nil)
+                    if response.page > 1 {
+                        let indexPathsToReload = self?.calculateIndexPathsToReload(from: response.results)
+                        DispatchQueue.main.async {
+                            self?.didFetchMoviesHandler?(indexPathsToReload)
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self?.didFetchMoviesHandler?(nil)
+                        }
+                    }
                 }
             }
-
-        currentMVVMMoviesDownloadTask?.resume()
     }
 
     func fetchPlayingMovies() {
-        let task = moviesManager.getMovieFetchTask(ofType: .playing, page: 1) { [weak self] response in
-            guard let successResponse = response else {
-                self?.didFailedFetchingMoviesHandler?()
-                return
+        moviesManager.fetchMovies(ofType: .playing, page: 1) { [weak self] result in
+            switch result {
+            case .failure:
+                DispatchQueue.main.async {
+                    self?.didFailedFetchingMoviesHandler?()
+                }
+            case let .success(response):
+                self?.playingMovies.append(contentsOf: response.results)
+                DispatchQueue.main.async {
+                    self?.didFetchPlayingMoviesHandler?()
+                }
             }
-
-            self?.playingMovies.append(contentsOf: successResponse.results)
-            self?.didFetchPlayingMoviesHandler?()
         }
-
-        task?.resume()
     }
 
     func refreshMovies() {
@@ -92,7 +104,7 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
     }
 
     func selectMoviesType(at index: Int) {
-        guard let selectedMVVMMoviesType = MVVMMoviesListType(rawValue: index) else {
+        guard let selectedMVVMMoviesType = MoviesListType(rawValue: index) else {
             return
         }
 
@@ -101,7 +113,7 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
         currentPage = 0
         movies = []
 
-        currentMVVMMoviesDownloadTask?.cancel()
+        currentMoviesDownloadTask?.cancel()
 
         fetchMovies()
     }
@@ -118,5 +130,18 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
         let startIndex = movies.count - newMVVMMovies.count
         let endIndex = startIndex + newMVVMMovies.count
         return (startIndex ..< endIndex).map { IndexPath(row: $0, section: 0) }
+    }
+
+    func playingMovieViewViewModel(forMovieAtIndexPath indexPath: IndexPath) -> PlayingMovieViewModelProtocol {
+        let movie = playingMovie(at: indexPath.row)
+        let viewModel = PlayingMovieViewModel(movie: movie, movieImagesService: MovieImagesService())
+
+        return viewModel
+    }
+
+    func movieCellViewModel(forMovieAtIndexPath indexPath: IndexPath) -> MovieCellViewModelProtocol {
+        let viewModel = MovieCellViewModel(movie: movie(at: indexPath.row), movieImagesService: MovieImagesService())
+
+        return viewModel
     }
 }

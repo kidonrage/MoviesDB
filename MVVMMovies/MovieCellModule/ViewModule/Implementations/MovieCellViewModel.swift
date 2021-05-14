@@ -1,20 +1,20 @@
 //
-//  MovieDetailsViewModel.swift
+//  MovieCellViewModel.swift
 //  MVVMMovies
 //
-//  Created by Vlad Eliseev on 12.05.2021.
+//  Created by Vlad Eliseev on 14.05.2021.
 //
 
 import Foundation
 
-final class MovieDetailViewModel: MovieDetailsViewModelProtocol {
+final class MovieCellViewModel: MovieCellViewModelProtocol {
     // MARK: - Public Properties
+
+    let movie: Movie
 
     var moviePosterURL: URL? {
         movieImagesService.getMoviePosterURL(withPath: movie.posterPath ?? "")
     }
-
-    let movie: Movie
 
     // MARK: - Private Properties
 
@@ -22,7 +22,7 @@ final class MovieDetailViewModel: MovieDetailsViewModelProtocol {
 
     // MARK: - Initializers
 
-    required init(movie: Movie, movieImagesService: MovieImagesServiceProtocol) {
+    init(movie: Movie, movieImagesService: MovieImagesServiceProtocol) {
         self.movie = movie
         self.movieImagesService = movieImagesService
     }

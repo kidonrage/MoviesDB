@@ -26,4 +26,6 @@ protocol MoviesListViewModelProtocol: AnyObject {
     func movie(at index: Int) -> Movie
     func playingMovie(at index: Int) -> Movie
     func calculateIndexPathsToReload(from newMVVMMovies: [Movie]) -> [IndexPath]
+    func playingMovieViewViewModel(forMovieAtIndexPath indexPath: IndexPath) -> PlayingMovieViewModelProtocol
+    func movieCellViewModel(forMovieAtIndexPath indexPath: IndexPath) -> MovieCellViewModelProtocol
 }

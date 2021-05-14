@@ -63,6 +63,10 @@ final class MovieTableViewCell: UITableViewCell {
         return stackView
     }()
 
+    // MARK: - Private Properties
+
+    private var viewModel: MovieCellViewModelProtocol?
+
     // MARK: - Initializers
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -78,26 +82,28 @@ final class MovieTableViewCell: UITableViewCell {
 
     // MARK: - Public Methods
 
-    func configure(with movie: Movie?) {
-        if let movie = movie {
-            posterView.alpha = 1
-            titleLabel.alpha = 1
-            dateLabel.alpha = 1
-            descriptionLabel.alpha = 1
-            titleLabel.text = movie.title
-            dateLabel.text = movie.releaseDate
-            descriptionLabel.text = movie.overview
-            indicatorView.stopAnimating()
-
-            if let posterURL = MVVMMoviesManager.getMoviePosterURL(withPath: movie.posterPath ?? "") {
-                posterView.loadImageFromUrl(url: posterURL)
-            }
-        } else {
+    func configure(with viewModel: MovieCellViewModelProtocol?) {
+        guard let viewModel = viewModel else {
             posterView.alpha = 0
             titleLabel.alpha = 0
             dateLabel.alpha = 0
             descriptionLabel.alpha = 0
             indicatorView.startAnimating()
+
+            return
+        }
+
+        posterView.alpha = 1
+        titleLabel.alpha = 1
+        dateLabel.alpha = 1
+        descriptionLabel.alpha = 1
+        titleLabel.text = viewModel.movie.title
+        dateLabel.text = viewModel.movie.releaseDate
+        descriptionLabel.text = viewModel.movie.overview
+        indicatorView.stopAnimating()
+
+        if let posterURL = viewModel.moviePosterURL {
+            posterView.loadImageFromUrl(url: posterURL)
         }
     }
 

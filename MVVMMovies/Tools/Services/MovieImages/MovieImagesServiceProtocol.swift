@@ -8,5 +8,13 @@
 import Foundation
 
 protocol MovieImagesServiceProtocol {
-    func getMoviePosterURL(withPath posterPath: String) -> URL?
+    func getMovieImageURL(withPath posterPath: String) -> URL?
+    func fetchImages(
+        ofMovieWithId movieId: Int,
+        _ completionHandler: @escaping (Result<[MoviePhoto], DataResponseError>) -> Void
+    )
+    func fetchImageData(
+        imagePath: String,
+        _ completionHandler: @escaping (Result<Data, DataResponseError>) -> Void
+    )
 }

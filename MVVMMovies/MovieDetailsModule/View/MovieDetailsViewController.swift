@@ -10,11 +10,16 @@ import UIKit
 final class MovieDetailsViewController: UIViewController {
     // MARK: - Visual Components
 
-    private let posterView: RemoteImageView = {
-        let imageView = RemoteImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.clipsToBounds = true
-        return imageView
+    private lazy var imagesSliderView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.register(MoviePhotoCell.self, forCellWithReuseIdentifier: MoviePhotoCell.cellId)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        return collectionView
     }()
 
     private let titleLabel: UILabel = {
@@ -38,10 +43,7 @@ final class MovieDetailsViewController: UIViewController {
     }()
 
     private lazy var contentStackView: UIStackView = {
-        let innerPosterView = UIStackView(arrangedSubviews: [UIView(), posterView, UIView()])
-        innerPosterView.distribution = .equalCentering
-
-        let stackView = UIStackView(arrangedSubviews: [innerPosterView, titleLabel, dateLabel, descriptionLabel])
+        let stackView = UIStackView(arrangedSubviews: [imagesSliderView, titleLabel, dateLabel, descriptionLabel])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.spacing = 12
@@ -76,23 +78,28 @@ final class MovieDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        bindViewModel()
+
         setupUI()
         updateUI()
+
+        viewModel.fetchMovieImages()
     }
 
     // MARK: - Private Methods
 
+    private func bindViewModel() {
+        viewModel.handleMovieImagesUpdate = { [weak self] in
+            self?.imagesSliderView.reloadData()
+        }
+    }
+
     private func updateUI() {
         title = viewModel.movie.title
 
-        posterView.image = nil
         titleLabel.text = viewModel.movie.title
         dateLabel.text = viewModel.movie.releaseDate
         descriptionLabel.text = viewModel.movie.overview
-
-        if let posterURL = viewModel.moviePosterURL {
-            posterView.loadImageFromUrl(url: posterURL)
-        }
     }
 
     private func setupUI() {
@@ -115,7 +122,48 @@ final class MovieDetailsViewController: UIViewController {
             contentStackView.topAnchor.constraint(equalTo: contentLayoutGuide.topAnchor, constant: 8),
             contentStackView.bottomAnchor.constraint(equalTo: contentLayoutGuide.bottomAnchor),
 
-            posterView.heightAnchor.constraint(equalToConstant: 200),
+            imagesSliderView.heightAnchor.constraint(equalToConstant: 200),
         ])
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+
+extension MovieDetailsViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        viewModel.movieImagesCount
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MoviePhotoCell.cellId,
+            for: indexPath
+        ) as? MoviePhotoCell
+        else {
+            return UICollectionViewCell()
+        }
+
+        cell.configure(with: viewModel.movieImageData(forImageAt: indexPath))
+
+        return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension MovieDetailsViewController: UICollectionViewDelegate {}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+
+extension MovieDetailsViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
     }
 }

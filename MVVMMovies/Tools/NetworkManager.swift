@@ -55,6 +55,29 @@ final class NetworkManager {
         return task
     }
 
+    @discardableResult
+    func executeDataTask(
+        with url: URL,
+        parameters: [String: String]?,
+        _ callback: @escaping (Result<Data, DataResponseError>) -> Void
+    ) -> URLSessionDataTask {
+        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+            guard
+                error == nil,
+                let data = data
+            else {
+                callback(.failure(.network))
+                return
+            }
+
+            callback(.success(data))
+        }
+
+        task.resume()
+
+        return task
+    }
+
     // MARK: - Private Methods
 
     private func getDataTask(

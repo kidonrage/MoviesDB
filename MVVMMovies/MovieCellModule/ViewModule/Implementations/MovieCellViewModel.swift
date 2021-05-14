@@ -13,7 +13,7 @@ final class MovieCellViewModel: MovieCellViewModelProtocol {
     let movie: Movie
 
     var moviePosterURL: URL? {
-        movieImagesService.getMoviePosterURL(withPath: movie.posterPath ?? "")
+        movieImagesService.getMovieImageURL(withPath: movie.posterPath ?? "")
     }
 
     // MARK: - Private Properties

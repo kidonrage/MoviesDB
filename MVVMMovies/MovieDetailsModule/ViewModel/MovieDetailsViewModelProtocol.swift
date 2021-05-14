@@ -7,7 +7,15 @@
 
 import Foundation
 
-protocol MovieDetailsViewModelProtocol {
+protocol MovieDetailsViewModelProtocol: AnyObject {
+    // MARK: - Public Properties
+
     var movie: Movie { get }
-    var moviePosterURL: URL? { get }
+    var movieImagesCount: Int { get }
+    var handleMovieImagesUpdate: (() -> ())? { get set }
+
+    // MARK: - Public Methods
+
+    func movieImageData(forImageAt indexPath: IndexPath) -> Data
+    func fetchMovieImages()
 }

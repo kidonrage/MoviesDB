@@ -40,6 +40,8 @@
 		E1B099BD264D730F00779F5F /* MoviesEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B099BC264D730F00779F5F /* MoviesEndpoints.swift */; };
 		E1C7EBFC26527B6F00B704DA /* DBMovie+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C7EBFA26527B6F00B704DA /* DBMovie+CoreDataClass.swift */; };
 		E1C7EBFD26527B6F00B704DA /* DBMovie+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C7EBFB26527B6F00B704DA /* DBMovie+CoreDataProperties.swift */; };
+		E1C7EC0426527F3500B704DA /* NetworkServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C7EC0326527F3500B704DA /* NetworkServiceProtocol.swift */; };
+		E1C7EC0A26527F7300B704DA /* DatabaseServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C7EC0926527F7300B704DA /* DatabaseServiceProtocol.swift */; };
 		E1D6AAD7264D516100025B5A /* DataResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D6AAD6264D516100025B5A /* DataResponseError.swift */; };
 		E1E20CCA265269E400EF9703 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E20CC9265269E300EF9703 /* CoreDataStack.swift */; };
 		E1E20CCE2652788E00EF9703 /* Movies.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E1E20CCC2652788E00EF9703 /* Movies.xcdatamodeld */; };
@@ -86,6 +88,8 @@
 		E1B099BC264D730F00779F5F /* MoviesEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesEndpoints.swift; sourceTree = "<group>"; };
 		E1C7EBFA26527B6F00B704DA /* DBMovie+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DBMovie+CoreDataClass.swift"; sourceTree = "<group>"; };
 		E1C7EBFB26527B6F00B704DA /* DBMovie+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DBMovie+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		E1C7EC0326527F3500B704DA /* NetworkServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceProtocol.swift; sourceTree = "<group>"; };
+		E1C7EC0926527F7300B704DA /* DatabaseServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseServiceProtocol.swift; sourceTree = "<group>"; };
 		E1D6AAD6264D516100025B5A /* DataResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataResponseError.swift; sourceTree = "<group>"; };
 		E1E20CC9265269E300EF9703 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		E1E20CCD2652788E00EF9703 /* Movies.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Movies.xcdatamodel; sourceTree = "<group>"; };
@@ -233,7 +237,6 @@
 			isa = PBXGroup;
 			children = (
 				E1B099B5264D716500779F5F /* Services */,
-				E176446825F8A14A00A8BBDA /* NetworkManager.swift */,
 				E17BB9CB264C2B0B008E170C /* Coordinator */,
 				E1D6AAD5264D514F00025B5A /* Networking */,
 			);
@@ -328,6 +331,7 @@
 		E1B099B5264D716500779F5F /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				E1C7EC0226527F2500B704DA /* Network */,
 				E1E20CC8265261CC00EF9703 /* Database */,
 				E15EA0A0264D87FD004723E8 /* MovieImages */,
 				E1B099B6264D717300779F5F /* Movies */,
@@ -360,6 +364,32 @@
 			path = Endpoints;
 			sourceTree = "<group>";
 		};
+		E1C7EC0226527F2500B704DA /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				E1C7EC0326527F3500B704DA /* NetworkServiceProtocol.swift */,
+				E1C7EC0726527F4000B704DA /* Implementations */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		E1C7EC0726527F4000B704DA /* Implementations */ = {
+			isa = PBXGroup;
+			children = (
+				E176446825F8A14A00A8BBDA /* NetworkManager.swift */,
+			);
+			path = Implementations;
+			sourceTree = "<group>";
+		};
+		E1C7EC0C26527F7F00B704DA /* Implementations */ = {
+			isa = PBXGroup;
+			children = (
+				E1E20CC9265269E300EF9703 /* CoreDataStack.swift */,
+				E1E20CCC2652788E00EF9703 /* Movies.xcdatamodeld */,
+			);
+			path = Implementations;
+			sourceTree = "<group>";
+		};
 		E1D6AAD5264D514F00025B5A /* Networking */ = {
 			isa = PBXGroup;
 			children = (
@@ -372,8 +402,8 @@
 		E1E20CC8265261CC00EF9703 /* Database */ = {
 			isa = PBXGroup;
 			children = (
-				E1E20CC9265269E300EF9703 /* CoreDataStack.swift */,
-				E1E20CCC2652788E00EF9703 /* Movies.xcdatamodeld */,
+				E1C7EC0926527F7300B704DA /* DatabaseServiceProtocol.swift */,
+				E1C7EC0C26527F7F00B704DA /* Implementations */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -541,6 +571,7 @@
 				E147FB6225F1E1B9009659E9 /* AppDelegate.swift in Sources */,
 				E147FB9C25F22E3B009659E9 /* MovieTableViewCell.swift in Sources */,
 				E1400A93264D9B010043D462 /* MovieCellViewModelProtocol.swift in Sources */,
+				E1C7EC0A26527F7300B704DA /* DatabaseServiceProtocol.swift in Sources */,
 				E17BB9D8264D4C80008E170C /* AlertDisplayer.swift in Sources */,
 				E16D5155264C07D400970727 /* MovieDetailsViewModel.swift in Sources */,
 				E16D5152264C07CA00970727 /* MovieDetailsViewModelProtocol.swift in Sources */,
@@ -561,6 +592,7 @@
 				E1E8519C264A8CCF009B258C /* MoviesListViewModel.swift in Sources */,
 				E1E20CCE2652788E00EF9703 /* Movies.xcdatamodeld in Sources */,
 				E1400AA6264E36C00043D462 /* MoviePhotoCell.swift in Sources */,
+				E1C7EC0426527F3500B704DA /* NetworkServiceProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

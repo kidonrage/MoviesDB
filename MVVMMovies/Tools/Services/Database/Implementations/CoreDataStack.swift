@@ -8,23 +8,7 @@
 import CoreData
 import Foundation
 
-final class ModernCoreDataStack {
-    private let databaseName = "Movies"
-
-    lazy var container: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: databaseName)
-
-        container.loadPersistentStores { _, error in
-            if let error = error as? NSError {
-                fatalError("Something went wrong while creating a persistent container: \(error) \(error.userInfo)")
-            }
-        }
-
-        return container
-    }()
-}
-
-final class CoreDataStack {
+final class CoreDataStack: DatabaseServiceProtocol {
     var didUpdateDatabase: ((CoreDataStack) -> Void)?
 
     private var storeURL: URL = {

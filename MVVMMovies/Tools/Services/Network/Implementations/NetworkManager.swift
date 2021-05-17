@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class NetworkManager {
+final class NetworkManager: NetworkServiceProtocol {
     // MARK: - Private Properties
 
     private let scheme = "https"

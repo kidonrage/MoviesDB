@@ -15,7 +15,11 @@ final class ApplicationCoordinator: BaseCoordinator {
     }
 
     private func showMoviesList() {
-        let controller = MoviesListViewController(viewModel: MoviesListViewModel(moviesManager: MoviesManager()))
+        let networkManager = NetworkManager()
+        let databaseManager = CoreDataStack()
+        let moviesManager = MoviesManager(networkManager: networkManager, databaseManager: databaseManager)
+        let viewModel = MoviesListViewModel(moviesManager: moviesManager)
+        let controller = MoviesListViewController(viewModel: viewModel)
 
         controller.handleGoingToMovieDetails = { [weak self] movie in
             self?.showMovieDetails(for: movie)

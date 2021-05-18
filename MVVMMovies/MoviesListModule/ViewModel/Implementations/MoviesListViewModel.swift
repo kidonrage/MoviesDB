@@ -41,6 +41,11 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
 
     init(moviesManager: MoviesManagerProtocol) {
         self.moviesManager = moviesManager
+
+        movies = moviesManager.getCachedMovies(ofType: currentMovieType)
+        total = movies.count
+
+        playingMovies = moviesManager.getCachedMovies(ofType: .playing)
     }
 
     // MARK: - Public Methods
@@ -63,14 +68,15 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
                     self?.currentPage += 1
 
                     self?.total = response.totalResults
-                    self?.movies.append(contentsOf: response.results)
 
                     if response.page > 1 {
+                        self?.movies.append(contentsOf: response.results)
                         let indexPathsToReload = self?.calculateIndexPathsToReload(from: response.results)
                         DispatchQueue.main.async {
                             self?.didFetchMoviesHandler?(indexPathsToReload)
                         }
                     } else {
+                        self?.movies = response.results
                         DispatchQueue.main.async {
                             self?.didFetchMoviesHandler?(nil)
                         }
@@ -97,7 +103,6 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
 
     func refreshMovies() {
         currentPage = 0
-        movies = []
 
         fetchMovies()
         fetchPlayingMovies()
@@ -111,7 +116,6 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
         currentMovieType = selectedMVVMMoviesType
 
         currentPage = 0
-        movies = []
 
         currentMoviesDownloadTask?.cancel()
 

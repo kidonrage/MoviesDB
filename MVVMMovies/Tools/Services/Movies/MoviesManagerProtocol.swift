@@ -8,6 +8,10 @@
 import Foundation
 
 protocol MoviesManagerProtocol {
+    func getCachedMovies(
+        ofType type: MoviesListType
+    ) -> [Movie]
+
     @discardableResult
     func fetchMovies(
         ofType type: MoviesListType,

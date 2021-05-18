@@ -2,7 +2,7 @@
 //  DBMovie+CoreDataClass.swift
 //  MVVMMovies
 //
-//  Created by Vlad Eliseev on 17.05.2021.
+//  Created by Vlad Eliseev on 19.05.2021.
 //
 //
 

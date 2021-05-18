@@ -92,6 +92,12 @@ final class CoreDataStack: DatabaseServiceProtocol {
         }
     }
 
+    func executeFetchRequest<T>(_ request: NSFetchRequest<T>) -> [T]? where T: NSFetchRequestResult {
+        let context = saveContext()
+        let result = try? context.fetch(request)
+        return result
+    }
+
     func enableObservers() {
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(

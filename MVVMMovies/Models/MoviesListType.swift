@@ -8,7 +8,7 @@
 import Foundation
 
 /// Тип получаемого списка фильмов
-enum MoviesListType: Int {
+enum MoviesListType: Int, Decodable {
     case popular
     case topRated
     case upcoming

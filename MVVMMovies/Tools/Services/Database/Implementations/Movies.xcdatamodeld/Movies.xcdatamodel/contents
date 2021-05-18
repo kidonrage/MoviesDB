@@ -6,6 +6,7 @@
         <attribute name="posterPath" optional="YES" attributeType="String"/>
         <attribute name="releaseDate" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
@@ -13,6 +14,6 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="DBMovie" positionX="-63" positionY="-18" width="128" height="14"/>
+        <element name="DBMovie" positionX="-63" positionY="-18" width="128" height="119"/>
     </elements>
 </model>

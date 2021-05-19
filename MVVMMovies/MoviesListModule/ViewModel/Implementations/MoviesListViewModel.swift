@@ -26,15 +26,17 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
     var didFetchMoviesHandler: (([IndexPath]?) -> ())?
     var didFetchPlayingMoviesHandler: (() -> ())?
 
+    var currentMovieType = MoviesListType.popular
+
+    var playingMovies: [Movie] = []
+    var movies: [Movie] = []
+
     // MARK: - Private Properties
 
-    private var playingMovies: [Movie] = []
-    private var movies: [Movie] = []
     private var total = 0
     private var currentPage = 0
     private var isFetchingInProgress = false
     private let moviesManager: MoviesManagerProtocol
-    private var currentMovieType = MoviesListType.popular
     private var currentMoviesDownloadTask: URLSessionTask?
 
     // MARK: - Initializers
@@ -128,12 +130,6 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
 
     func playingMovie(at index: Int) -> Movie {
         playingMovies[index]
-    }
-
-    func calculateIndexPathsToReload(from newMVVMMovies: [Movie]) -> [IndexPath] {
-        let startIndex = movies.count - newMVVMMovies.count
-        let endIndex = startIndex + newMVVMMovies.count
-        return (startIndex ..< endIndex).map { IndexPath(row: $0, section: 0) }
     }
 
     func playingMovieViewViewModel(forMovieAtIndexPath indexPath: IndexPath) -> PlayingMovieViewModelProtocol {

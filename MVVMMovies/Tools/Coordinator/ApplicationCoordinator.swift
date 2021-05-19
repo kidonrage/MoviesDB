@@ -27,6 +27,7 @@ final class ApplicationCoordinator: BaseCoordinator {
 
         let rootController = UINavigationController(rootViewController: controller)
         setAsRoot(rootController)
+        rootController.navigationBar.accessibilityLabel = "MVVMMovies"
         self.rootController = rootController
     }
 

@@ -31,7 +31,13 @@ final class MoviesManager: MoviesManagerProtocol {
 
         let results = databaseManager.executeFetchRequest(request)
 
-        return (results ?? []).compactMap { Movie(dbMovie: $0) }
+        var mappedResults: [Movie] = []
+
+        DispatchQueue.main.async {
+            mappedResults = (results ?? []).compactMap { Movie(dbMovie: $0) }
+        }
+
+        return mappedResults
     }
 
     @discardableResult
@@ -64,7 +70,9 @@ final class MoviesManager: MoviesManagerProtocol {
                     return result
                 }
 
-                self?.saveMoviesToDB(movies)
+                DispatchQueue.main.async {
+                    self?.saveMoviesToDB(movies)
+                }
 
                 completionHandler(result)
             default:

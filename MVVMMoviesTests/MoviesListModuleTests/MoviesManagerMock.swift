@@ -22,17 +22,18 @@ final class MoviesManagerMock: MoviesManagerProtocol {
         page: Int,
         _ completionHandler: @escaping (Result<MoviesQueryResponse, DataResponseError>) -> Void
     ) -> URLSessionDataTask? {
-        let mockedResults = [Movie](
-            repeating: Movie(
-                id: 0,
+        var mockedResults: [Movie] = []
+
+        for index in 0 ..< moviesFetchResultsCount {
+            mockedResults.append(Movie(
+                id: index * page,
                 title: "Title",
                 posterPath: nil,
                 releaseDate: "10-05-2021",
                 overview: "Overview",
                 type: type
-            ),
-            count: moviesFetchResultsCount
-        )
+            ))
+        }
 
         let mockedResponse = MoviesQueryResponse(results: mockedResults, page: page, totalResults: 30)
 

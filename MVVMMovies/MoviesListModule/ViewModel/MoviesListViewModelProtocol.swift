@@ -16,6 +16,9 @@ protocol MoviesListViewModelProtocol: AnyObject {
     var didFailedFetchingMoviesHandler: (() -> ())? { get set }
     var didFetchMoviesHandler: ((_ newIndexPathsToReload: [IndexPath]?) -> ())? { get set }
     var didFetchPlayingMoviesHandler: (() -> ())? { get set }
+    var currentMovieType: MoviesListType { get set }
+    var movies: [Movie] { get set }
+    var playingMovies: [Movie] { get set }
 
     // MARK: - Public Methods
 
@@ -28,4 +31,12 @@ protocol MoviesListViewModelProtocol: AnyObject {
     func calculateIndexPathsToReload(from newMVVMMovies: [Movie]) -> [IndexPath]
     func playingMovieViewViewModel(forMovieAtIndexPath indexPath: IndexPath) -> PlayingMovieViewModelProtocol
     func movieCellViewModel(forMovieAtIndexPath indexPath: IndexPath) -> MovieCellViewModelProtocol
+}
+
+extension MoviesListViewModelProtocol {
+    func calculateIndexPathsToReload(from newMVVMMovies: [Movie]) -> [IndexPath] {
+        let startIndex = movies.count - newMVVMMovies.count
+        let endIndex = startIndex + newMVVMMovies.count
+        return (startIndex ..< endIndex).map { IndexPath(row: $0, section: 0) }
+    }
 }

@@ -18,3 +18,9 @@ protocol MovieImagesServiceProtocol {
         _ completionHandler: @escaping (Result<Data, DataResponseError>) -> Void
     )
 }
+
+extension MovieImagesServiceProtocol {
+    func getMovieImageURL(withPath imagePath: String) -> URL? {
+        URL(string: "http://image.tmdb.org/t/p/w342\(imagePath)")
+    }
+}

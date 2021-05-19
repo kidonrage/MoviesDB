@@ -19,6 +19,8 @@ struct Movie: Decodable {
 
     var type: MoviesListType?
 
+    // MARK: - Initializers
+
     init(dbMovie: DBMovie) {
         id = Int(dbMovie.id)
         title = dbMovie.title ?? ""
@@ -26,5 +28,21 @@ struct Movie: Decodable {
         releaseDate = dbMovie.releaseDate ?? ""
         overview = dbMovie.overview ?? ""
         type = MoviesListType(rawValue: Int(dbMovie.type))
+    }
+
+    init(
+        id: Int,
+        title: String,
+        posterPath: String?,
+        releaseDate: String,
+        overview: String,
+        type: MoviesListType?
+    ) {
+        self.id = id
+        self.title = title
+        self.posterPath = posterPath
+        self.releaseDate = releaseDate
+        self.overview = overview
+        self.type = type
     }
 }

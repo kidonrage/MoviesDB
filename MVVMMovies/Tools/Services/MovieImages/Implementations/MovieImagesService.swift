@@ -52,10 +52,6 @@ final class MovieImagesService: MovieImagesServiceProtocol {
         }
     }
 
-    func getMovieImageURL(withPath imagePath: String) -> URL? {
-        URL(string: "http://image.tmdb.org/t/p/w342\(imagePath)")
-    }
-
     // MARK: - Private Methods
 
     private func getCachedImageData(imagePath: String) -> Data? {

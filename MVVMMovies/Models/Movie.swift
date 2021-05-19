@@ -16,9 +16,15 @@ struct Movie: Decodable {
     let posterPath: String?
     let releaseDate: String
     let overview: String
-    let popularity: Double
-    let adult: Bool
-    let genreIds: [Int]
-    let voteAverage: Float
-    let voteCount: Int
+
+    var type: MoviesListType?
+
+    init(dbMovie: DBMovie) {
+        id = Int(dbMovie.id)
+        title = dbMovie.title ?? ""
+        posterPath = dbMovie.posterPath
+        releaseDate = dbMovie.releaseDate ?? ""
+        overview = dbMovie.overview ?? ""
+        type = MoviesListType(rawValue: Int(dbMovie.type))
+    }
 }
